@@ -54,26 +54,27 @@ fn main() {
             }
         }
     }
-    println!("Part 1: {}", part_1(&reports, x_coord.clone(), y_coord.clone(), d.clone()));
+    println!("Part 1: {}", part_1(reports.clone(), x_coord.clone(), y_coord.clone(), d.clone()));
     println!("Part 2: {}", part_2(&mut reports, x_coord.clone(), y_coord.clone(), d.clone()));
 }
 
-fn part_1(reports: &Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut d: Direction) -> i32 {
+fn part_1(mut reports: Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut d: Direction) -> i32 {
     let mut sum = 1;
-    let mut visited: HashSet<(usize, usize)> = HashSet::new();
     loop {
-        //println!("{:?}", visited);
-        //println!("X: {} Y: {}", x_coord, y_coord);
         match d {
             Direction::South =>{
                 if x_coord + 1 < reports.len() {
                     match reports[x_coord + 1][y_coord] {
                         '.' => {
-                            if !visited.contains(&(x_coord, y_coord)) {sum += 1; visited.insert((x_coord, y_coord));};
+                            reports[x_coord][y_coord] = '_';
+                            sum += 1;
+                            x_coord += 1; 
+                        }
+                        '_' => {
                             x_coord += 1; 
                         }
                         '#' => {d = Direction::West;}
-                        _ => {();}
+                        _ => {panic!("Unreachable code!");}
                     }
                 } else {return sum;}
             }
@@ -81,11 +82,15 @@ fn part_1(reports: &Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut 
                 if y_coord + 1 < reports[0].len() {
                     match reports[x_coord][y_coord + 1] {
                         '.' => { 
-                            if !visited.contains(&(x_coord, y_coord)) {sum += 1; visited.insert((x_coord, y_coord));};
+                            reports[x_coord][y_coord] = '_';
+                            sum += 1;
                             y_coord += 1; 
                         }
+                        '_' => {
+                            y_coord += 1;
+                        }
                         '#' => {d = Direction::South;}
-                        _ => {();}
+                        _ => {panic!("Unreachable code!");}
                     }
                 } else {return sum;}
             }
@@ -93,11 +98,15 @@ fn part_1(reports: &Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut 
                 if y_coord != 0 {
                     match reports[x_coord][y_coord - 1] {
                         '.' => {
-                            if !visited.contains(&(x_coord, y_coord)) {sum += 1; visited.insert((x_coord, y_coord));};
+                            reports[x_coord][y_coord] = '_';
+                            sum += 1;
+                            y_coord -= 1; 
+                        }
+                        '_' => {
                             y_coord -= 1; 
                         }
                         '#' => {d = Direction::North;}
-                        _ => {();}
+                        _ => {panic!("Unreachable code!");}
                     }
                 } else {return sum;}
             }
@@ -105,11 +114,15 @@ fn part_1(reports: &Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut 
                 if x_coord != 0 {
                     match reports[x_coord - 1][y_coord] {
                         '.' => {
-                            if !visited.contains(&(x_coord, y_coord)) {sum += 1; visited.insert((x_coord, y_coord));};
+                            reports[x_coord][y_coord] = '_';
+                            sum += 1;
                             x_coord -= 1; 
                         }
+                        '_' => {
+                            x_coord -= 1;
+                        }
                         '#' => {d = Direction::East;}
-                        _ => {();}
+                        _ => {panic!("Unreachable code!");}
                     }
                 } else {return sum;}
             }
@@ -133,8 +146,6 @@ fn part_2(reports: &mut Vec<Vec<char>>, x_coord: usize, y_coord: usize, d: Direc
 fn check_for_loop(reports: &Vec<Vec<char>>, mut x_coord: usize, mut y_coord: usize, mut d: Direction) -> bool {
     let mut visited: HashSet<((usize, usize), (usize, usize))> = HashSet::new();
     loop {
-        //println!("{:?}", visited);
-        //println!("X: {} Y: {}", x_coord, y_coord);
         match d {
             Direction::South =>{
                 if x_coord + 1 < reports.len() {
@@ -206,7 +217,7 @@ mod tests {
             vec!['#','.','.','.','.','.','.','.','.','.'],
             vec!['.','.','.','.','.','.','#','.','.','.']
           ];
-        assert_eq!(part_1(&reports, 6, 4, Direction::North), 41);
+        assert_eq!(part_1(reports, 6, 4, Direction::North), 41);
     }
     #[test]
     fn test_part_2() {
