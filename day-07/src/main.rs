@@ -18,7 +18,7 @@ fn main() {
     println!("Part 2: {}", part_1_and_2(&answers, &values, true));
 }
 
-fn part_1_and_2(answers: &Vec<u64>, values: &Vec<Vec<u64>>, conc_enabled: bool) -> u64 {
+fn part_1_and_2(answers: &[u64], values: &[Vec<u64>], conc_enabled: bool) -> u64 {
     let mut sum = 0;
     let zap = answers.into_iter().zip(values.into_iter());
     for line in zap {
@@ -29,11 +29,8 @@ fn part_1_and_2(answers: &Vec<u64>, values: &Vec<Vec<u64>>, conc_enabled: bool) 
     return sum;
 }
 
-fn possible(answer: &u64, value_vec: &Vec<u64>, current: u64, index: usize, conc_enabled: bool) -> bool {
-    if current == *answer {
-        return true;
-    }
-    if index < value_vec.len() as usize {   //Check that we have not run out of values. If we have return false.
+fn possible(answer: &u64, value_vec: &[u64], current: u64, index: usize, conc_enabled: bool) -> bool {
+    if index < value_vec.len() {   //Check that we have not run out of values. If we have return false.
         let next_value = value_vec[index];
         let add = possible(&answer, &value_vec, current + next_value, index + 1, conc_enabled);
         let mult = possible(&answer, &value_vec, current * next_value, index + 1, conc_enabled);
@@ -44,9 +41,12 @@ fn possible(answer: &u64, value_vec: &Vec<u64>, current: u64, index: usize, conc
 
         return add || mult || conc;
     } else {
-        return false;
+        if current == *answer {
+            return true;
+        } else{
+            return false;
+        }
     }
-    
 }
 
 #[cfg(test)]
@@ -88,5 +88,4 @@ mod tests {
 
         assert_eq!(part_1_and_2(&answers, &values, true), 11387);
     }
-
 }
